@@ -1,0 +1,13 @@
+.simulation-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .simulation-components {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 20px;
+  }
+  
