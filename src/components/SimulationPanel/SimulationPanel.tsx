@@ -3,7 +3,7 @@ import ALU from './components/ALU';
 import ControlUnit from './components/ControlUnit';
 import Memory from './components/Memory';
 import Registers from './components/Registers';
-import './SimulationPanel.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface SimulationPanelProps {
   operand1: string;
@@ -84,18 +84,46 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ operand1, operand2 })
   }, [step]);
 
   return (
-    <div className="simulation-panel">
-      <h1>Simulador de la Máquina de Von Neumann</h1>
-      <div className="toolbar">
-        <button onClick={handleStart}>Iniciar</button>
-        <button onClick={handlePause}>Pausar</button>
-        <button onClick={handleStep}>Paso a Paso</button>
+    <div className="container my-4">
+      <h1 className="text-center mb-4">Simulador de la Máquina de Von Neumann</h1>
+      <div className="toolbar d-flex justify-content-center mb-4">
+        <button className="btn btn-primary mx-2" onClick={handleStart}>Iniciar</button>
+        <button className="btn btn-warning mx-2" onClick={handlePause}>Pausar</button>
+        <button className="btn btn-secondary mx-2" onClick={handleStep}>Paso a Paso</button>
       </div>
-      <div className="simulation-components">
-        <Memory values={memoryValues} step={step} />
-        <ControlUnit step={step} onStep={handleStep} />
-        <ALU operand1={registerValues.reg1} operand2={registerValues.reg2} />
-        <Registers values={registerValues} step={step} />
+      <div className="row">
+        <div className="col-md-6 mb-4">
+          <div className="card">
+            <div className="card-header">Memoria</div>
+            <div className="card-body">
+              <Memory values={memoryValues} step={step} />
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6 mb-4">
+          <div className="card">
+            <div className="card-header">Unidad de Control</div>
+            <div className="card-body">
+              <ControlUnit step={step} onStep={handleStep} />
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6 mb-4">
+          <div className="card">
+            <div className="card-header">ALU</div>
+            <div className="card-body">
+              <ALU operand1={registerValues.reg1} operand2={registerValues.reg2} />
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6 mb-4">
+          <div className="card">
+            <div className="card-header">Registros</div>
+            <div className="card-body">
+              <Registers values={registerValues} step={step} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
