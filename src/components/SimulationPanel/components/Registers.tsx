@@ -11,7 +11,7 @@ const Registers: React.FC<RegistersProps> = ({ values, step }) => {
 
   useEffect(() => {
     // Determinamos cuándo los registros deben estar activos
-    if (step === 1 || step === 2) {
+    if (step === 3) {
       setIsActive(true);
 
       const timer = setTimeout(() => {

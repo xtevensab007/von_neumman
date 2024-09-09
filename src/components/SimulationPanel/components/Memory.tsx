@@ -11,7 +11,7 @@ const Memory: React.FC<MemoryProps> = ({ values, step }) => {
   const [isActive, setIsActive] = useState<boolean>(false); // Estado para manejar si la memoria está activa
 
   useEffect(() => {
-    if (step === 1 || step === 2) {
+    if (step === 1 || step === 2 || step === 5) {
       setIsActive(true);
       
       const timer = setTimeout(() => {

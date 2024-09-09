@@ -4,6 +4,8 @@ import ControlUnit from './components/ControlUnit';
 import Memory from './components/Memory';
 import Registers from './components/Registers';
 import ProgressPanel from './components/ProgressPanel';
+import SimulationControls from './components/SimulationControls';
+import useSimulationSteps from '../../hooks/useSimulationSteps';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface SimulationPanelProps {
@@ -12,8 +14,8 @@ interface SimulationPanelProps {
 }
 
 const SimulationPanel: React.FC<SimulationPanelProps> = ({ operand1, operand2 }) => {
-  const [isRunning, setIsRunning] = useState(false); // Estado para controlar la simulación automática
-  const [step, setStep] = useState<number>(0); // Estado para el paso actual de la simulación
+  const { isRunning, step, startSimulation, pauseSimulation, nextStep } = useSimulationSteps();
+
   const [registerValues, setRegisterValues] = useState<{ reg1: string; reg2: string }>({
     reg1: '',
     reg2: '',
@@ -25,84 +27,51 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ operand1, operand2 })
     3: 'AND [0], [1]', // Instrucción almacenada
   });
 
+  // Lógica de la simulación según el paso actual (puede ser movida a un hook personalizado)
+  const fetchInstruction = () => console.log('Instrucción cargada en la Unidad de Control:', memoryValues[3]);
+  const decodeInstruction = () => console.log('Instrucción decodificada: Realizar AND entre valores en memoria [0] y [1].');
+  const loadOperandsToRegisters = () => setRegisterValues({ reg1: memoryValues[0], reg2: memoryValues[1] });
+  const performALUOperation = (): string => (parseInt(registerValues.reg1, 2) & parseInt(registerValues.reg2, 2)).toString(2).padStart(4, '0');
+  const storeResultInMemory = (result: string) => setMemoryValues((prevValues) => ({ ...prevValues, 2: result }));
+
+  // Actualización basada en el paso de la simulación
   useEffect(() => {
-    let timer: number;
-
-    if (isRunning && step < 5) {
-      timer = setTimeout(() => {
-        setStep((prevStep) => prevStep + 1);
-      }, 2000);
-    }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [isRunning, step]);
-
-  const handleStart = () => {
-    setIsRunning(true);
-    setStep(1);
-  };
-
-  const handlePause = () => {
-    setIsRunning(false);
-  };
-
-  const handleStep = () => {
-    setStep((prevStep) => prevStep + 1);
-  };
-
-  const fetchInstruction = () => {
-    console.log('Instrucción cargada en la Unidad de Control:', memoryValues[3]);
-  };
-
-  const decodeInstruction = () => {
-    console.log('Instrucción decodificada: Realizar AND entre valores en memoria [0] y [1].');
-  };
-
-  const loadOperandsToRegisters = () => {
-    setRegisterValues({ reg1: memoryValues[0], reg2: memoryValues[1] });
-    console.log('Operandos cargados en los registros:', memoryValues[0], memoryValues[1]); // Mostrar valores directos
-  };
-
-  const performALUOperation = (): string => {
-    const result = (parseInt(registerValues.reg1, 2) & parseInt(registerValues.reg2, 2))
-      .toString(2)
-      .padStart(4, '0');
-    console.log(`Resultado de la operación AND: ${result}`);
-    return result;
-  };
-
-  const storeResultInMemory = (result: string) => {
-    setMemoryValues((prevValues) => ({ ...prevValues, 2: result }));
-    console.log('Resultado almacenado en memoria:', { ...memoryValues, 2: result });
-  };
-
-  useEffect(() => {
-    if (step === 1) {
-      fetchInstruction();
-    } else if (step === 2) {
-      decodeInstruction();
-    } else if (step === 3) {
-      loadOperandsToRegisters();
-    } else if (step === 4) {
-      const result = performALUOperation();
-      storeResultInMemory(result);
-    } else if (step > 4) {
-      setIsRunning(false);
+    switch (step) {
+      case 1:
+        fetchInstruction();
+        break;
+      case 2:
+        decodeInstruction();
+        break;
+      case 3:
+        loadOperandsToRegisters();
+        break;
+      case 4: 
+        performALUOperation();
+        break;
+      case 5: {
+        const result = performALUOperation();
+        storeResultInMemory(result); // Mover almacenamiento al paso 5
+        pauseSimulation();
+        break;
+      }
+      default:
+        break;
     }
   }, [step]);
 
   return (
     <div className="container my-4">
       <h1 className="text-center mb-4">Simulador de la Máquina de Von Neumann</h1>
-      <div className="toolbar d-flex justify-content-center mb-4">
-        <button className="btn btn-primary mx-2" onClick={handleStart}>Iniciar</button>
-        <button className="btn btn-warning mx-2" onClick={handlePause}>Pausar</button>
-        <button className="btn btn-secondary mx-2" onClick={handleStep}>Paso a Paso</button>
-      </div>
+      {/* Deshabilitar botones "Iniciar" o "Pausar" según isRunning */}
+      <SimulationControls
+        onStart={startSimulation}
+        onPause={pauseSimulation}
+        onStep={nextStep}
+        isRunning={isRunning}
+      />
+      {isRunning && <p className="text-center text-info">Simulación en curso...</p>}
       <div className="row">
-        {/* Columna Izquierda */}
         <div className="col-md-6 mb-4">
           <ProgressPanel step={step} />
           <div className="card mt-4">
@@ -112,26 +81,10 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ operand1, operand2 })
             </div>
           </div>
         </div>
-        {/* Columna Derecha */}
         <div className="col-md-6 mb-4">
-          <div className="card mb-4">
-            <div className="card-header">Unidad de Control</div>
-            <div className="card-body">
-              <ControlUnit step={step} onStep={handleStep} />
-            </div>
-          </div>
-          <div className="card mb-4">
-            <div className="card-header">ALU</div>
-            <div className="card-body">
-              <ALU operand1={registerValues.reg1} operand2={registerValues.reg2} />
-            </div>
-          </div>
-          <div className="card">
-            <div className="card-header">Registros</div>
-            <div className="card-body">
-              <Registers values={registerValues} step={step} />
-            </div>
-          </div>
+          <ControlUnit step={step} onStep={nextStep} />
+          <ALU operand1={registerValues.reg1} operand2={registerValues.reg2} step={step} />
+          <Registers values={registerValues} step={step} />
         </div>
       </div>
     </div>
