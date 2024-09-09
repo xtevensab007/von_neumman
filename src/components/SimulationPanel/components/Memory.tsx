@@ -42,7 +42,9 @@ const Memory: React.FC<MemoryProps> = ({ values, step }) => {
             cardTitle = 'Valor 2';
           } else if (address === '2') {
             cardTitle = 'Resultado';
-          } else {
+          } else if (address === '3'){
+            cardTitle = 'Instrucción';
+          }else {
             cardTitle = 'Valor';
           }
 

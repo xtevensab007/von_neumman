@@ -11,7 +11,7 @@ const ControlUnit: React.FC<ControlUnitProps> = ({ step, onStep }) => {
 
   useEffect(() => {
     // Activar la unidad de control en el paso actual
-    if (step >= 0 && step <= 3) {
+    if (step >= 1 && step <= 4) {
       setIsActive(true);
       
       const timer = setTimeout(() => {
@@ -19,6 +19,8 @@ const ControlUnit: React.FC<ControlUnitProps> = ({ step, onStep }) => {
       }, 500);
 
       return () => clearTimeout(timer);
+    } else {
+      setIsActive(false);
     }
   }, [step]);
 
@@ -33,7 +35,7 @@ const ControlUnit: React.FC<ControlUnitProps> = ({ step, onStep }) => {
         <p>Paso actual: {step}</p>
         <button 
           onClick={handleNextStep} 
-          disabled={step >= 3} 
+          disabled={step >= 5}  // Permitir avanzar hasta el paso 5
           className="btn btn-primary"
         >
           Siguiente Paso

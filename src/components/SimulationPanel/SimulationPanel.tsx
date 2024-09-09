@@ -3,6 +3,7 @@ import ALU from './components/ALU';
 import ControlUnit from './components/ControlUnit';
 import Memory from './components/Memory';
 import Registers from './components/Registers';
+import ProgressPanel from './components/ProgressPanel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface SimulationPanelProps {
@@ -21,12 +22,13 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ operand1, operand2 })
     0: operand1,
     1: operand2,
     2: '', // Para el resultado de la operación AND
+    3: 'AND [0], [1]', // Instrucción almacenada
   });
 
   useEffect(() => {
     let timer: number;
 
-    if (isRunning && step < 3) {
+    if (isRunning && step < 5) {
       timer = setTimeout(() => {
         setStep((prevStep) => prevStep + 1);
       }, 2000);
@@ -50,14 +52,20 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ operand1, operand2 })
     setStep((prevStep) => prevStep + 1);
   };
 
+  const fetchInstruction = () => {
+    console.log('Instrucción cargada en la Unidad de Control:', memoryValues[3]);
+  };
+
+  const decodeInstruction = () => {
+    console.log('Instrucción decodificada: Realizar AND entre valores en memoria [0] y [1].');
+  };
+
   const loadOperandsToRegisters = () => {
-    // Paso 1: Cargar operandos desde la memoria a los registros
     setRegisterValues({ reg1: memoryValues[0], reg2: memoryValues[1] });
-    console.log('Operandos cargados en los registros:', registerValues);
+    console.log('Operandos cargados en los registros:', memoryValues[0], memoryValues[1]); // Mostrar valores directos
   };
 
   const performALUOperation = (): string => {
-    // Paso 2: Realizar operación AND en la ALU
     const result = (parseInt(registerValues.reg1, 2) & parseInt(registerValues.reg2, 2))
       .toString(2)
       .padStart(4, '0');
@@ -66,19 +74,21 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ operand1, operand2 })
   };
 
   const storeResultInMemory = (result: string) => {
-    // Paso 3: Almacenar el resultado de la ALU en la memoria
     setMemoryValues((prevValues) => ({ ...prevValues, 2: result }));
     console.log('Resultado almacenado en memoria:', { ...memoryValues, 2: result });
   };
 
-  // Control de los pasos de la simulación
   useEffect(() => {
     if (step === 1) {
-      loadOperandsToRegisters();
+      fetchInstruction();
     } else if (step === 2) {
+      decodeInstruction();
+    } else if (step === 3) {
+      loadOperandsToRegisters();
+    } else if (step === 4) {
       const result = performALUOperation();
       storeResultInMemory(result);
-    } else if (step > 2) {
+    } else if (step > 4) {
       setIsRunning(false);
     }
   }, [step]);
@@ -92,31 +102,30 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ operand1, operand2 })
         <button className="btn btn-secondary mx-2" onClick={handleStep}>Paso a Paso</button>
       </div>
       <div className="row">
+        {/* Columna Izquierda */}
         <div className="col-md-6 mb-4">
-          <div className="card">
+          <ProgressPanel step={step} />
+          <div className="card mt-4">
             <div className="card-header">Memoria</div>
             <div className="card-body">
               <Memory values={memoryValues} step={step} />
             </div>
           </div>
         </div>
+        {/* Columna Derecha */}
         <div className="col-md-6 mb-4">
-          <div className="card">
+          <div className="card mb-4">
             <div className="card-header">Unidad de Control</div>
             <div className="card-body">
               <ControlUnit step={step} onStep={handleStep} />
             </div>
           </div>
-        </div>
-        <div className="col-md-6 mb-4">
-          <div className="card">
+          <div className="card mb-4">
             <div className="card-header">ALU</div>
             <div className="card-body">
               <ALU operand1={registerValues.reg1} operand2={registerValues.reg2} />
             </div>
           </div>
-        </div>
-        <div className="col-md-6 mb-4">
           <div className="card">
             <div className="card-header">Registros</div>
             <div className="card-body">

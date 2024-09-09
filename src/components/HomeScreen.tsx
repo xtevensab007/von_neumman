@@ -23,7 +23,7 @@ const HomeScreen: React.FC = () => {
     <Container className="d-flex justify-content-center align-items-center vh-100">
       <Card className="p-4" style={{ width: '400px' }}>
         <Card.Body>
-          <Card.Title className="text-center mb-4">Simulador de Máquina de Von Neumann</Card.Title>
+          <Card.Title className="text-center mb-4">Simulador de Máquina de Von Neumann <br/> Operación AND</Card.Title>
           {error && <Alert variant="danger">{error}</Alert>}
           <Form>
             <Form.Group controlId="input1">
