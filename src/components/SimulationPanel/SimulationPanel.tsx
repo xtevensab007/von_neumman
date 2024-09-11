@@ -27,7 +27,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ operand1, operand2 })
     3: 'AND [0], [1]', // Instrucción almacenada
   });
 
-  // Lógica de la simulación según el paso actual (puede ser movida a un hook personalizado)
+  // Lógica de la simulación según el paso actual
   const fetchInstruction = () => console.log('Instrucción cargada en la Unidad de Control:', memoryValues[3]);
   const decodeInstruction = () => console.log('Instrucción decodificada: Realizar AND entre valores en memoria [0] y [1].');
   const loadOperandsToRegisters = () => setRegisterValues({ reg1: memoryValues[0], reg2: memoryValues[1] });
