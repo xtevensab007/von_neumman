@@ -5,6 +5,7 @@ interface SimulationControlsProps {
   onPause: () => void;
   onStep: () => void;
   isRunning: boolean;
+  
 }
 
 const SimulationControls: React.FC<SimulationControlsProps> = ({ onStart, onPause, onStep, isRunning }) => {

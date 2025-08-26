@@ -5,6 +5,7 @@ interface ALUProps {
   operand1: string;
   operand2: string;
   step: number;  // Agregar prop 'step' para manejar el cálculo condicionalmente
+  
 }
 
 const ALU: React.FC<ALUProps> = ({ operand1, operand2, step }) => {

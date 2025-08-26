@@ -4,6 +4,7 @@ import './components.css';
 interface RegistersProps {
   values: { reg1: string; reg2: string };
   step: number;
+  
 }
 
 const Registers: React.FC<RegistersProps> = ({ values, step }) => {

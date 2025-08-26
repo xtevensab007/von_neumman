@@ -8,6 +8,7 @@ import SimulationControls from './components/SimulationControls';
 import useSimulationSteps from '../../hooks/useSimulationSteps';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
 interface SimulationPanelProps {
   operand1: string;
   operand2: string; // números binarios

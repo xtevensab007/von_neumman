@@ -5,6 +5,7 @@ import './components.css';
 interface MemoryProps {
   values: { [address: number]: string };
   step: number;
+  
 }
 
 const Memory: React.FC<MemoryProps> = ({ values, step }) => {

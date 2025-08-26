@@ -8,6 +8,8 @@ const HomeScreen: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  
+
   // Validación simple para asegurarse de que solo se ingrese binario
   const isValidBinary = (input: string) => /^[01]+$/.test(input);
 

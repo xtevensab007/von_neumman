@@ -2,6 +2,7 @@ import React from 'react';
 
 interface ProgressPanelProps {
   step: number;
+  
 }
 
 const ProgressPanel: React.FC<ProgressPanelProps> = ({ step }) => {

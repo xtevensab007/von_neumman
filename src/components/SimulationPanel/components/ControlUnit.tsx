@@ -4,6 +4,7 @@ import './components.css';
 interface ControlUnitProps {
   step: number;
   onStep: () => void;
+  
 }
 
 const ControlUnit: React.FC<ControlUnitProps> = ({ step, onStep }) => {
